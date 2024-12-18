@@ -7,12 +7,16 @@ import numpy as np
 import torch
 from PIL import Image
 
+# 导入模型
+from models.grasp_transformer.swin import SwinTransformerSys
+from models.grcnn.grconvnet import GenerativeResnet
+
 # 同目录下导入的包——>后续需要将其他目录下的包也导入进来
 from camera_data import CameraData
 from utils.hardware.device import get_device
 # 硬件类
 # from hardware.camera import RealSenseCamera
-# from hardware.device import get_device
+from utils.hardware.device import get_device
 # 其他目录下的功能包
 from utils.inference.post_process import post_process_output
 from utils.dataset_processing.grasp import detect_grasps
@@ -20,7 +24,7 @@ from utils.visualisation.plot import plot_grasp
 
 
 class GraspGenerator:
-    def __init__(self, saved_model_path, cam_id, visualize=False):
+    def __init__(self, saved_model_path, visualize=False):
 
         # 设置训练好的模型的路径 + 是否使用GPU
         self.saved_model_path = saved_model_path
@@ -29,7 +33,7 @@ class GraspGenerator:
 
         # 1.相机设备输入 和 图像预处理
         # self.camera = RealSenseCamera(device_id=cam_id)
-        self.cam_data = CameraData(include_depth=True, include_rgb=True)
+        self.cam_data = CameraData(include_depth=False, include_rgb=True)
         # Connect to camera
         # self.camera.connect()
 
@@ -52,7 +56,12 @@ class GraspGenerator:
 
     def load_model(self):
         print('Loading model... ')
-        self.model = torch.load(self.saved_model_path)
+        model = SwinTransformerSys(in_chans=3, embed_dim=48, num_heads=[1, 2, 4, 8])
+        device = torch.device("cuda:0")
+        model = model.to(device)
+        model.load_state_dict(torch.load(self.saved_model_path))
+        model.eval()
+        self.model = model
         # Get the compute device
         self.device = get_device(force_cpu=False)
 
@@ -67,8 +76,14 @@ class GraspGenerator:
         rgb_path = "/home/junhaohu/dataset/test_model/RGB.png"
         # 使用Pillow库的Image.open函数打开图片文件
         rgb_image = Image.open(rgb_path)
+        target_size = (224, 224)
+        rgb_image.thumbnail(target_size)
         # 将图片数据转换为numpy数组，这里使用np.asanyarray
         rgb = np.asanyarray(rgb_image)
+
+        # 通过切片操作删除第三个通道（索引为2）的最后一部分内容，保留前三个通道
+        rgb = rgb[:, :, :3]
+
         depth_path = "/home/junhaohu/dataset/test_model/mask.png"
         depth_image = Image.open(depth_path)
         depth = np.asanyarray(depth_image)
@@ -85,6 +100,7 @@ class GraspGenerator:
         q_img, ang_img, width_img = post_process_output(pred['pos'], pred['cos'], pred['sin'], pred['width'])
         # 送到检测抓取函数获得抓取姿态
         grasps = detect_grasps(q_img, ang_img, width_img)
+        print(grasps)
 
         # Get grasp position from model output
         # 可以加一个判断：如果检测抓取姿态为0，则放弃抓取
@@ -125,10 +141,6 @@ class GraspGenerator:
             plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, save=True)
 
     def run(self):
-        while True:
-            if np.load(self.grasp_request):
-                self.generate()
-                np.save(self.grasp_request, 0)
-                np.save(self.grasp_available, 1)
-            else:
-                time.sleep(0.1)
+        print("test begining")
+        self.generate()
+

@@ -11,7 +11,7 @@ from PIL import Image
 from camera_data import CameraData
 # 硬件类
 # from hardware.camera import RealSenseCamera
-# from hardware.device import get_device
+from utils.hardware.device import get_device
 # 其他目录下的功能包
 from grcnn.inference.post_process import post_process_output
 from grasp_transformer.utils.dataset_processing.grasp import detect_grasps

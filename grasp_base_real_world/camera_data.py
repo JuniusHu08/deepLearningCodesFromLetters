@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from grasp_transformer.utils.dataset_processing import image
+from utils.dataset_processing import image
 
 
 class CameraData:
@@ -9,8 +9,8 @@ class CameraData:
     Dataset wrapper for the camera data.
     """
     def __init__(self,
-                 width=640,
-                 height=480,
+                 width=224,
+                 height=224,
                  output_size=224,
                  include_depth=True,
                  include_rgb=True
@@ -51,6 +51,7 @@ class CameraData:
         return depth_img.img
 
     def get_rgb(self, img, norm=True):
+        # mark一下：这里会将图像进行裁减
         rgb_img = image.Image(img)
         rgb_img.crop(bottom_right=self.bottom_right, top_left=self.top_left)
         # rgb_img.resize((self.output_size, self.output_size))
