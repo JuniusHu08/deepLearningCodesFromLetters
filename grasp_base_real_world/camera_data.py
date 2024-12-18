@@ -47,7 +47,8 @@ class CameraData:
         depth_img.crop(bottom_right=self.bottom_right, top_left=self.top_left)
         depth_img.normalise()
         # depth_img.resize((self.output_size, self.output_size))
-        depth_img.img = depth_img.img.transpose((2, 0, 1))
+        depth_img.img = depth_img.img.transpose((1, 0))
+        # depth_img.img = depth_img.img.transpose((2, 0, 1))
         return depth_img.img
 
     def get_rgb(self, img, norm=True):

@@ -43,14 +43,10 @@ class JacquardDataset(GraspDatasetBase):
         gtbbs = grasp.GraspRectangles.load_from_jacquard_file(self.grasp_files[idx], scale=self.output_size / 1024.0)
         c = self.output_size//2
         if isinstance(rot, torch.Tensor):
-            print(rot)
-            print("----------rot-------------")
             rot = rot.item()
             print(rot)
         gtbbs.rotate(rot, (c, c))
         if isinstance(zoom, torch.Tensor):
-            print(zoom)
-            print("----------zoom-------------")
             zoom = zoom.item()
             print(zoom)
         gtbbs.zoom(zoom, (c, c))

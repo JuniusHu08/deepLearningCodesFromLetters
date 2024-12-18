@@ -918,6 +918,16 @@ class SwinTransformerSys(nn.Module):
                 'width': width_pred
             }
         }
+
+    def predict(self, xc):
+        pos_pred, cos_pred, sin_pred, width_pred = self(xc)
+        return {
+            'pos': pos_pred,
+            'cos': cos_pred,
+            'sin': sin_pred,
+            'width': width_pred
+        }
+
     def flops(self):
         flops = 0
         flops += self.patch_embed.flops()

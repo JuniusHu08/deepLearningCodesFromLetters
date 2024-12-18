@@ -44,6 +44,7 @@ class GraspGenerator:
 
     def load_model(self):
         print('Loading model... ')
+        # self.model = model.load_state_dict(torch.load(self.saved_model_path))
         self.model = torch.load(self.saved_model_path)
         # Get the compute device
         self.device = get_device(force_cpu=False)

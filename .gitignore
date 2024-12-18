@@ -1,2 +1,5 @@
 /.idea/
 /grasp_transformer/output/
+/grcnn/output/
+/ggcnn/output/
+/grasp_base_real_world/results/

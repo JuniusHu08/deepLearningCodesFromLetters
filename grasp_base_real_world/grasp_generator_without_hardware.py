@@ -33,7 +33,7 @@ class GraspGenerator:
 
         # 1.相机设备输入 和 图像预处理
         # self.camera = RealSenseCamera(device_id=cam_id)
-        self.cam_data = CameraData(include_depth=False, include_rgb=True)
+        self.cam_data = CameraData(include_depth=True, include_rgb=True)
         # Connect to camera
         # self.camera.connect()
 
@@ -84,8 +84,9 @@ class GraspGenerator:
         # 通过切片操作删除第三个通道（索引为2）的最后一部分内容，保留前三个通道
         rgb = rgb[:, :, :3]
 
-        depth_path = "/home/junhaohu/dataset/test_model/mask.png"
+        depth_path = "/home/junhaohu/dataset/test_model/DEPTH.png"
         depth_image = Image.open(depth_path)
+        depth_image.thumbnail(target_size)
         depth = np.asanyarray(depth_image)
 
         # 在类中对输入的图像做处理得到x
