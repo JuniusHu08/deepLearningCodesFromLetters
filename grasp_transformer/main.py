@@ -72,7 +72,7 @@ def run():
 
     logging.info('Loading Network...')
     input_channels = 1*args.use_depth + 3*args.use_rgb
-    net = SwinTransformerSys(in_chans=input_channels, embed_dim=48, num_heads=[1, 2, 4, 8])
+    net = SwinTransformerSys(in_chans=input_channels, imagesize = 480, embed_dim=48, num_heads=[1, 2, 4, 8])
     device = torch.device("cuda:0")
     net = net.to(device)
     optimizer = optim.AdamW(net.parameters(), lr=1e-4)
