@@ -1,4 +1,5 @@
 import logging
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,7 +27,8 @@ class RealSenseCamera:
         # Start and configure
         self.pipeline = rs.pipeline()
         config = rs.config()
-        config.enable_device(str(self.device_id))
+        # 一个相机不需要知道相机id
+        # config.enable_device(str(self.device_id))
         config.enable_stream(rs.stream.depth, self.width, self.height, rs.format.z16, self.fps)
         config.enable_stream(rs.stream.color, self.width, self.height, rs.format.rgb8, self.fps)
         cfg = self.pipeline.start(config)
@@ -39,18 +41,19 @@ class RealSenseCamera:
         self.scale = cfg.get_device().first_depth_sensor().get_depth_scale()
 
     def get_image_bundle(self):
-        frames = self.pipeline.wait_for_frames()
+        for i in range(10):
+            frames = self.pipeline.wait_for_frames()
 
-        align = rs.align(rs.stream.color)
-        aligned_frames = align.process(frames)
-        color_frame = aligned_frames.first(rs.stream.color)
-        aligned_depth_frame = aligned_frames.get_depth_frame()
+            align = rs.align(rs.stream.color)
+            aligned_frames = align.process(frames)
+            color_frame = aligned_frames.first(rs.stream.color)
+            aligned_depth_frame = aligned_frames.get_depth_frame()
 
-        depth_image = np.asarray(aligned_depth_frame.get_data(), dtype=np.float32)
-        depth_image *= self.scale
-        color_image = np.asanyarray(color_frame.get_data())
+            depth_image = np.asarray(aligned_depth_frame.get_data(), dtype=np.float32)
+            depth_image *= self.scale
+            color_image = np.asanyarray(color_frame.get_data())
 
-        depth_image = np.expand_dims(depth_image, axis=2)
+            depth_image = np.expand_dims(depth_image, axis=2)
 
         return {
             'rgb': color_image,

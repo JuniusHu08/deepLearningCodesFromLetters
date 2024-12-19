@@ -47,18 +47,19 @@ class CameraData:
         depth_img.crop(bottom_right=self.bottom_right, top_left=self.top_left)
         depth_img.normalise()
         # depth_img.resize((self.output_size, self.output_size))
-        depth_img.img = depth_img.img.transpose((1, 0))
-        # depth_img.img = depth_img.img.transpose((2, 0, 1))
+        # 数据集里的深度图只有两个维度，实际相机的深度图有3个维度且第三维度为一个通道
+        # depth_img.img = depth_img.img.transpose((1, 0))
+        depth_img.img = depth_img.img.transpose((2, 0, 1))
         return depth_img.img
 
     def get_rgb(self, img, norm=True):
-        # mark一下：这里会将图像进行裁减
         rgb_img = image.Image(img)
+        # mark一下：这里会将图像进行裁减
         rgb_img.crop(bottom_right=self.bottom_right, top_left=self.top_left)
         # rgb_img.resize((self.output_size, self.output_size))
         if norm:
                 rgb_img.normalise()
-                rgb_img.img = rgb_img.img.transpose((2, 0, 1))
+        rgb_img.img = rgb_img.img.transpose((2, 0, 1))
         return rgb_img.img
 
     def get_data(self, rgb=None, depth=None):
@@ -76,8 +77,8 @@ class CameraData:
 
         #包含深度的话需要做一个拼接
         if self.include_depth and self.include_rgb:
-            # print(np.expand_dims(depth_img, 0).shape)
-            # print(np.expand_dims(rgb_img, 0).shape)
+            print(np.expand_dims(depth_img, 0).shape)
+            print(np.expand_dims(rgb_img, 0).shape)
             x = self.numpy_to_torch(
                     np.concatenate(
                         (np.expand_dims(depth_img, 0),

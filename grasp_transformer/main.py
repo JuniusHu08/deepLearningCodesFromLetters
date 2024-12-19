@@ -18,7 +18,7 @@ def parse_args():
     # Dataset & Data & Training
     parser.add_argument('--dataset', type=str,default="jacquard", help='Dataset Name ("cornell" or "jacquard")')
     parser.add_argument('--dataset-path', type=str,default="/home/junhaohu/dataset/jacquard" ,help='Path to dataset')
-    parser.add_argument('--use-depth', type=int, default=0, help='Use Depth image for training (1/0)')
+    parser.add_argument('--use-depth', type=int, default=1, help='Use Depth image for training (1/0)')
     parser.add_argument('--use-rgb', type=int, default=1, help='Use RGB image for training (0/1)')
     parser.add_argument('--split', type=float, default=0.9, help='Fraction of data for training (remainder is validation)')
     parser.add_argument('--ds-rotate', type=float, default=0.0,
@@ -27,7 +27,7 @@ def parse_args():
 
     parser.add_argument('--batch-size', type=int, default=32, help='Batch size')
     parser.add_argument('--vis', type=bool, default=False, help='vis')
-    parser.add_argument('--epochs', type=int, default=1000, help='Training epochs')
+    parser.add_argument('--epochs', type=int, default=100, help='Training epochs')
     parser.add_argument('--batches-per-epoch', type=int, default=200, help='Batches per Epoch')
     parser.add_argument('--val-batches', type=int, default=32, help='Validation Batches')
     # Logging etc.
@@ -85,7 +85,8 @@ def run():
     summary(net, (input_channels, 224, 224))
     sys.stdout = sys.__stdout__
     f.close()
-    best_iou = 0.0
+    # 设置最低的交并比
+    best_iou = 0.7
     for epoch in range(args.epochs):
         logging.info('Beginning Epoch {:02d}'.format(epoch))
         print("current lr:",optimizer.state_dict()['param_groups'][0]['lr'])

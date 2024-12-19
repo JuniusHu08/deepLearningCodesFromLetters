@@ -7,10 +7,13 @@ import numpy as np
 import torch
 from PIL import Image
 
+# 导入模型
+from models.grasp_transformer.swin import SwinTransformerSys
+
 # 同目录下导入的包——>后续需要将其他目录下的包也导入进来
 from camera_data import CameraData
 # 硬件类
-# from hardware.camera import RealSenseCamera
+from utils.hardware.camera import RealSenseCamera
 from utils.hardware.device import get_device
 # 其他目录下的功能包
 from grcnn.inference.post_process import post_process_output
@@ -27,21 +30,22 @@ class GraspGenerator:
         self.device = None
 
         # 1.相机设备输入 和 图像预处理
-        # self.camera = RealSenseCamera(device_id=cam_id)
-        self.cam_data = CameraData(include_depth=True, include_rgb=True)
+        self.camera = RealSenseCamera(device_id=cam_id)
         # Connect to camera
-        # self.camera.connect()
+        self.camera.connect()
+
+        self.cam_data = CameraData(include_depth=True, include_rgb=True)
 
         # Load camera pose and depth scale (from running calibration)
-        # 2.手眼标定结果倒入
-        self.cam_pose = np.loadtxt('saved_data/camera_pose.txt', delimiter=' ')
-        self.cam_depth_scale = np.loadtxt('saved_data/camera_depth_scale.txt', delimiter=' ')
+        # 2.手眼标定结果导入
+        # self.cam_pose = np.loadtxt('saved_data/camera_pose.txt', delimiter=' ')
+        # self.cam_depth_scale = np.loadtxt('saved_data/camera_depth_scale.txt', delimiter=' ')
 
-        # 3.应该是将最后算出来的抓取结果放到对应文件中
-        # homedir = os.path.join(os.path.expanduser('~'), "grasp-comms")
-        # self.grasp_request = os.path.join(homedir, "grasp_request.npy")
-        # self.grasp_available = os.path.join(homedir, "grasp_available.npy")
-        # self.grasp_pose = os.path.join(homedir, "grasp_pose.npy")
+        # 3.应该是将最后算出来的抓取结果放到对应文件中 /home/junhaohu/grasp-comms
+        homedir = os.path.join(os.path.expanduser('~'), "grasp-comms")
+        self.grasp_request = os.path.join(homedir, "grasp_request.npy")
+        self.grasp_available = os.path.join(homedir, "grasp_available.npy")
+        self.grasp_pose = os.path.join(homedir, "grasp_pose.npy")
 
         # 4.可视化
         if visualize:
@@ -51,26 +55,22 @@ class GraspGenerator:
 
     def load_model(self):
         print('Loading model... ')
-        self.model = torch.load(self.saved_model_path)
+        # 这里需要改成是否包含深度图和RGB
+        # model = SwinTransformerSys(in_chans=3, embed_dim=48, num_heads=[1, 2, 4, 8])
+        model = SwinTransformerSys(in_chans=4, embed_dim=48, num_heads=[1, 2, 4, 8])
+        device = torch.device("cuda:0")
+        model = model.to(device)
+        model.load_state_dict(torch.load(self.saved_model_path))
+        model.eval()
+        self.model = model
         # Get the compute device
         self.device = get_device(force_cpu=False)
 
     def generate(self):
-        # Get RGB-D image from camera
-        # image_bundle = self.camera.get_image_bundle()
-        # rgb = image_bundle['rgb']
-        # depth = image_bundle['aligned_depth']
-
-        # 获取rgb图和深度图
-        # 图片文件路径，这里替换为你实际的png图片文件的路径
-        rgb_path = "/home/junhaohu/dataset/test_model/RGB.png"
-        # 使用Pillow库的Image.open函数打开图片文件
-        rgb_image = Image.open(rgb_path)
-        # 将图片数据转换为numpy数组，这里使用np.asanyarray
-        rgb = np.asanyarray(rgb_image)
-        depth_path = "/home/junhaohu/dataset/test_model/mask.png"
-        depth_image = Image.open(depth_path)
-        depth = np.asanyarray(depth_image)
+        # Get RGB-D image from camera ---> 先不获取深度图像
+        image_bundle = self.camera.get_image_bundle()
+        rgb = image_bundle['rgb']
+        depth = image_bundle['aligned_depth']
 
         # 在类中对输入的图像做处理得到x
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
@@ -100,7 +100,7 @@ class GraspGenerator:
         # target = np.asarray([pos_x, pos_y, pos_z])
         # target.shape = (3, 1)
         # print('target: ', target)
-        #
+        # #
         # # Convert camera to robot coordinates机械臂坐标下的位置
         # camera2robot = self.cam_pose
         # target_position = np.dot(camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
@@ -124,10 +124,11 @@ class GraspGenerator:
             plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, save=True)
 
     def run(self):
-        while True:
-            if np.load(self.grasp_request):
-                self.generate()
-                np.save(self.grasp_request, 0)
-                np.save(self.grasp_available, 1)
-            else:
-                time.sleep(0.1)
+        self.generate()
+        # while True:
+            # if np.load(self.grasp_request):
+            #     self.generate()
+            #     np.save(self.grasp_request, 0)
+            #     np.save(self.grasp_available, 1)
+            # else:
+            #     time.sleep(0.1)
