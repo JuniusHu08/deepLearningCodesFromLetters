@@ -17,7 +17,7 @@ graspnet_root = "/home/zzl/Pictures/graspnet"
 class GraspNet1BDataset(GraspDatasetBase):
 
     def __init__(self, file_path, camera='realsense', split='train', scale=2.0, ds_rotate=True,
-                                output_size=224,
+                                output_size=448,
                                 random_rotate=True, random_zoom=True,
                                 include_depth=True,
                                 include_rgb=True,

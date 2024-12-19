@@ -25,9 +25,9 @@ def parse_args():
                         help='Shift the start point of the dataset to use a different test/train split for cross validation.')
     parser.add_argument('--num-workers', type=int, default=8, help='Dataset workers')
 
-    parser.add_argument('--batch-size', type=int, default=32, help='Batch size')
+    parser.add_argument('--batch-size', type=int, default=16, help='Batch size')
     parser.add_argument('--vis', type=bool, default=False, help='vis')
-    parser.add_argument('--epochs', type=int, default=100, help='Training epochs')
+    parser.add_argument('--epochs', type=int, default=500, help='Training epochs')
     parser.add_argument('--batches-per-epoch', type=int, default=200, help='Batches per Epoch')
     parser.add_argument('--val-batches', type=int, default=32, help='Validation Batches')
     # Logging etc.
@@ -72,17 +72,17 @@ def run():
 
     logging.info('Loading Network...')
     input_channels = 1*args.use_depth + 3*args.use_rgb
-    net = SwinTransformerSys(in_chans=input_channels, embed_dim=48, num_heads=[1, 2, 4, 8])
+    net = SwinTransformerSys(in_chans=input_channels, img_size= 448 ,embed_dim=48, num_heads=[1, 2, 4, 8])
     device = torch.device("cuda:0")
     net = net.to(device)
     optimizer = optim.AdamW(net.parameters(), lr=1e-4)
     listy = [x * 2 for x in range(1,1000,5)]
     schedule=torch.optim.lr_scheduler.MultiStepLR(optimizer,milestones=listy,gamma=0.5)
     logging.info('Done')
-    summary(net, (input_channels, 224, 224))
+    summary(net, (input_channels, 448, 448))
     f = open(os.path.join(save_folder, 'net.txt'), 'w')
     sys.stdout = f
-    summary(net, (input_channels, 224, 224))
+    summary(net, (input_channels, 448, 448))
     sys.stdout = sys.__stdout__
     f.close()
     # 设置最低的交并比
