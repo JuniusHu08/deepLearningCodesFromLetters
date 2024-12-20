@@ -10,14 +10,17 @@ from torchsummary import summary
 from traning import train, validate
 from utils.data import get_dataset
 from models.swin import SwinTransformerSys
-logging.basicConfig(filename='my_log.log',level=logging.INFO)
+# logging.basicConfig(filename='my_log.log',level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
+
 def parse_args():
     parser = argparse.ArgumentParser(description='TF-Grasp')
 
     # Network
     # Dataset & Data & Training
     parser.add_argument('--dataset', type=str,default="jacquard", help='Dataset Name ("cornell" or "jacquard")')
-    parser.add_argument('--dataset-path', type=str,default="/home/junhaohu/dataset/jacquard" ,help='Path to dataset')
+    # parser.add_argument('--dataset-path', type=str,default="/home/junhaohu/dataset/jacquard" ,help='Path to dataset')
+    parser.add_argument('--dataset-path', type=str, default="/home/junhaohu/dataset/jacquard_debug", help='Path to dataset')
     parser.add_argument('--use-depth', type=int, default=1, help='Use Depth image for training (1/0)')
     parser.add_argument('--use-rgb', type=int, default=1, help='Use RGB image for training (0/1)')
     parser.add_argument('--split', type=float, default=0.9, help='Fraction of data for training (remainder is validation)')
@@ -101,7 +104,7 @@ def run():
                                      test_results['correct']/(test_results['correct']+test_results['failed'])))
 
         iou = test_results['correct'] / (test_results['correct'] + test_results['failed'])
-        if epoch%1==0 or iou>best_iou:
+        if epoch%10 == 0 or iou>best_iou:
             torch.save(net, os.path.join(save_folder, 'epoch_%02d_iou_%0.2f' % (epoch, iou)))
             torch.save(net.state_dict(), os.path.join(save_folder, 'epoch_%02d_iou_%0.2f_statedict.pt' % (epoch, iou)))
         best_iou = iou
