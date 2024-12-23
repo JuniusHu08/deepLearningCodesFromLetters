@@ -1,6 +1,9 @@
+import cv2
 import torch
 import torch.utils.data
 import torch.optim as optim
+from matplotlib import pyplot as plt
+
 from utils.dataset_processing import evaluation
 from models.common import post_process_output
 import logging
@@ -94,9 +97,13 @@ def train(epoch, net, device, train_data, optimizer, batches_per_epoch, vis=Fals
             batch_idx += 1
             if batch_idx >= batches_per_epoch:
                 break
-            # print("x_0:",x[0].shape,y[0][0].shape)
-            # plt.imshow(x[0].permute(1,2,0).numpy())
-            # plt.show()
+            print("x_0:",x[0].shape,y[0][0].shape)
+            # a = x[0].permute(1,2,0).numpy()
+            # a = a[:,:,:3]
+            # cv2.imshow('Image', a)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
+
             # plt.imshow(y[0][0][0].numpy())
             # plt.show()
             xc = x.to(device)
