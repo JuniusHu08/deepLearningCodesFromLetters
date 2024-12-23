@@ -10,8 +10,8 @@ from torchsummary import summary
 from traning import train, validate
 from utils.data import get_dataset
 from models.swin import SwinTransformerSys
-# logging.basicConfig(filename='my_log.log',level=logging.INFO)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='my_log.log',level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='TF-Grasp')
@@ -19,8 +19,8 @@ def parse_args():
     # Network
     # Dataset & Data & Training
     parser.add_argument('--dataset', type=str,default="jacquard", help='Dataset Name ("cornell" or "jacquard")')
-    # parser.add_argument('--dataset-path', type=str,default="/home/junhaohu/dataset/jacquard" ,help='Path to dataset')
-    parser.add_argument('--dataset-path', type=str, default="/home/junhaohu/dataset/jacquard_debug", help='Path to dataset')
+    parser.add_argument('--dataset-path', type=str,default="/home/junhaohu/dataset/jacquard" ,help='Path to dataset')
+    # parser.add_argument('--dataset-path', type=str, default="/home/junhaohu/dataset/jacquard_debug", help='Path to dataset')
     parser.add_argument('--use-depth', type=int, default=1, help='Use Depth image for training (1/0)')
     parser.add_argument('--use-rgb', type=int, default=1, help='Use RGB image for training (0/1)')
     parser.add_argument('--split', type=float, default=0.9, help='Fraction of data for training (remainder is validation)')
@@ -30,8 +30,8 @@ def parse_args():
 
     parser.add_argument('--batch-size', type=int, default=16, help='Batch size')
     parser.add_argument('--vis', type=bool, default=False, help='vis')
-    parser.add_argument('--epochs', type=int, default=500, help='Training epochs')
-    parser.add_argument('--batches-per-epoch', type=int, default=200, help='Batches per Epoch')
+    parser.add_argument('--epochs', type=int, default=1000, help='Training epochs')
+    parser.add_argument('--batches-per-epoch', type=int, default=500, help='Batches per Epoch')
     parser.add_argument('--val-batches', type=int, default=32, help='Validation Batches')
     # Logging etc.
     parser.add_argument('--description', type=str, default='', help='Training description')
