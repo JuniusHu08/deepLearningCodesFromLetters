@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from matplotlib import pyplot as plt
 
 from utils.dataset_processing import image
 
@@ -9,9 +10,9 @@ class CameraData:
     Dataset wrapper for the camera data.
     """
     def __init__(self,
-                 width=224,
-                 height=224,
-                 output_size=224,
+                 width=680,
+                 height=480,
+                 output_size=448,
                  include_depth=True,
                  include_rgb=True
                  ):
@@ -42,13 +43,13 @@ class CameraData:
         else:
             return torch.from_numpy(s.astype(np.float32))
 
+
     def get_depth(self, img):
         depth_img = image.DepthImage(img)
         depth_img.crop(bottom_right=self.bottom_right, top_left=self.top_left)
         depth_img.normalise()
         # depth_img.resize((self.output_size, self.output_size))
         # 数据集里的深度图只有两个维度，实际相机的深度图有3个维度且第三维度为一个通道
-        # depth_img.img = depth_img.img.transpose((1, 0))
         depth_img.img = depth_img.img.transpose((2, 0, 1))
         return depth_img.img
 
@@ -56,6 +57,12 @@ class CameraData:
         rgb_img = image.Image(img)
         # mark一下：这里会将图像进行裁减
         rgb_img.crop(bottom_right=self.bottom_right, top_left=self.top_left)
+        plt.imshow(rgb_img.img)
+        # 如果是灰度图，需要添加如下设置以正确显示灰度图（如果是彩色图可省略这行）
+        # plt.imshow(image_data, cmap='gray')
+        plt.axis('off')  # 可以选择是否显示坐标轴，这里关闭坐标轴显示
+        plt.show()
+
         # rgb_img.resize((self.output_size, self.output_size))
         if norm:
                 rgb_img.normalise()

@@ -37,9 +37,11 @@ class GraspGenerator:
         self.cam_data = CameraData(include_depth=True, include_rgb=True)
 
         # Load camera pose and depth scale (from running calibration)
-        # 2.手眼标定结果导入
+        # 2.手眼标定结果导入 + 深度相机的比例系数
+        # 还需要修改相机内参
         # self.cam_pose = np.loadtxt('saved_data/camera_pose.txt', delimiter=' ')
         # self.cam_depth_scale = np.loadtxt('saved_data/camera_depth_scale.txt', delimiter=' ')
+        self.cam_depth_scale = np.array(1.0)
 
         # 3.应该是将最后算出来的抓取结果放到对应文件中 /home/junhaohu/grasp-comms
         homedir = os.path.join(os.path.expanduser('~'), "grasp-comms")
@@ -82,43 +84,49 @@ class GraspGenerator:
             pred = self.model.predict(xc)
         # 预测结果输出q是质量图片，ang是角度，wid是宽度
         q_img, ang_img, width_img = post_process_output(pred['pos'], pred['cos'], pred['sin'], pred['width'])
+
+        # rgb_img = rgb_img.transpose((1, 2, 0))
+        # depth_img = depth_img.transpose((1, 2, 0))
+
         # 送到检测抓取函数获得抓取姿态
         grasps = detect_grasps(q_img, ang_img, width_img)
+
+        plot_grasp(fig=self.fig, rgb_img=rgb_img.transpose((1, 2, 0)), grasps=grasps, save=True)
 
         # Get grasp position from model output
         # 可以加一个判断：如果检测抓取姿态为0，则放弃抓取
         # 将图像的点与实际进行对应，具体转换关系得再细看————转换关系->图像位姿和实际位姿映射
-        # pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0], grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale - 0.04
-        # pos_x = np.multiply(grasps[0].center[1] + self.cam_data.top_left[1] - self.camera.intrinsics.ppx,
-        #                     pos_z / self.camera.intrinsics.fx)
-        # pos_y = np.multiply(grasps[0].center[0] + self.cam_data.top_left[0] - self.camera.intrinsics.ppy,
-        #                     pos_z / self.camera.intrinsics.fy)
+        pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0], grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale - 0.04
+        pos_x = np.multiply(grasps[0].center[1] + self.cam_data.top_left[1] - self.camera.intrinsics.ppx,
+                            pos_z / self.camera.intrinsics.fx)
+        pos_y = np.multiply(grasps[0].center[0] + self.cam_data.top_left[0] - self.camera.intrinsics.ppy,
+                            pos_z / self.camera.intrinsics.fy)
+
+        if pos_z == 0:
+            return
+
+        target = np.asarray([pos_x, pos_y, pos_z])
+        target.shape = (3, 1)
+        print('target: ', target)
         #
-        # if pos_z == 0:
-        #     return
-        #
-        # target = np.asarray([pos_x, pos_y, pos_z])
-        # target.shape = (3, 1)
-        # print('target: ', target)
-        # #
-        # # Convert camera to robot coordinates机械臂坐标下的位置
-        # camera2robot = self.cam_pose
-        # target_position = np.dot(camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
-        # target_position = target_position[0:3, 0]
-        #
-        # # Convert camera to robot angle机械臂坐标下的抓取姿态，可能有问题，需要看一下
-        # angle = np.asarray([0, 0, grasps[0].angle])
-        # angle.shape = (3, 1)
-        # target_angle = np.dot(camera2robot[0:3, 0:3], angle)
-        #
-        # # 加上抓取的宽度
-        #
-        # # Concatenate grasp pose with grasp angle
-        # grasp_pose = np.append(target_position, target_angle[2])
-        #
-        # print('grasp_pose: ', grasp_pose)
-        #
-        # np.save(self.grasp_pose, grasp_pose)
+        # Convert camera to robot coordinates机械臂坐标下的位置
+        camera2robot = self.cam_pose
+        target_position = np.dot(camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
+        target_position = target_position[0:3, 0]
+
+        # Convert camera to robot angle机械臂坐标下的抓取姿态，可能有问题，需要看一下
+        angle = np.asarray([0, 0, grasps[0].angle])
+        angle.shape = (3, 1)
+        target_angle = np.dot(camera2robot[0:3, 0:3], angle)
+
+        # 加上抓取的宽度
+
+        # Concatenate grasp pose with grasp angle
+        grasp_pose = np.append(target_position, target_angle[2])
+
+        print('grasp_pose: ', grasp_pose)
+
+        np.save(self.grasp_pose, grasp_pose)
 
         if self.fig:
             plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, save=True)

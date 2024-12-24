@@ -21,7 +21,31 @@ from utils.hardware.device import get_device
 from utils.inference.post_process import post_process_output
 from utils.dataset_processing.grasp import detect_grasps
 from utils.visualisation.plot import plot_grasp
+from utils.dataset_processing import image
 
+# 定义之外的函数是为了更好处理数据集
+def numpy_to_torch(s):
+    if len(s.shape) == 2:
+        return torch.from_numpy(np.expand_dims(s, 0).astype(np.float32))
+    else:
+        return torch.from_numpy(s.astype(np.float32))
+
+def get_depth(out_putsize, depth_file_name):
+    depth_img = image.DepthImage.from_tiff(depth_file_name)
+    depth_img.normalise()
+    tuple_output = (out_putsize,out_putsize)
+    depth_img.resize(tuple_output)
+    return depth_img.img
+
+
+def get_rgb(out_putsize, rgb_file_name, normalise=True):
+    rgb_img = image.Image.from_file(rgb_file_name)
+    tuple_output = (out_putsize,out_putsize)
+    rgb_img.resize(tuple_output)
+    if normalise:
+        rgb_img.normalise()
+        rgb_img.img = rgb_img.img.transpose((2, 0, 1))
+    return rgb_img.img
 
 class GraspGenerator:
     def __init__(self, saved_model_path, visualize=False):
@@ -34,19 +58,6 @@ class GraspGenerator:
         # 1.相机设备输入 和 图像预处理
         # self.camera = RealSenseCamera(device_id=cam_id)
         self.cam_data = CameraData(include_depth=True, include_rgb=True)
-        # Connect to camera
-        # self.camera.connect()
-
-        # Load camera pose and depth scale (from running calibration)
-        # 2.手眼标定结果倒入
-        # self.cam_pose = np.loadtxt('saved_data/camera_pose.txt', delimiter=' ')
-        # self.cam_depth_scale = np.loadtxt('saved_data/camera_depth_scale.txt', delimiter=' ')
-
-        # 3.应该是将最后算出来的抓取结果放到对应文件中
-        # homedir = os.path.join(os.path.expanduser('~'), "grasp-comms")
-        # self.grasp_request = os.path.join(homedir, "grasp_request.npy")
-        # self.grasp_available = os.path.join(homedir, "grasp_available.npy")
-        # self.grasp_pose = os.path.join(homedir, "grasp_pose.npy")
 
         # 4.可视化
         if visualize:
@@ -56,7 +67,7 @@ class GraspGenerator:
 
     def load_model(self):
         print('Loading model... ')
-        model = SwinTransformerSys(in_chans=3, embed_dim=48, num_heads=[1, 2, 4, 8])
+        model = SwinTransformerSys(in_chans=4, embed_dim=48, num_heads=[1, 2, 4, 8])
         device = torch.device("cuda:0")
         model = model.to(device)
         model.load_state_dict(torch.load(self.saved_model_path))
@@ -66,31 +77,34 @@ class GraspGenerator:
         self.device = get_device(force_cpu=False)
 
     def generate(self):
-        # Get RGB-D image from camera
-        # image_bundle = self.camera.get_image_bundle()
-        # rgb = image_bundle['rgb']
-        # depth = image_bundle['aligned_depth']
 
         # 获取rgb图和深度图
         # 图片文件路径，这里替换为你实际的png图片文件的路径
-        rgb_path = "/home/junhaohu/dataset/test_model/RGB.png"
-        # 使用Pillow库的Image.open函数打开图片文件
-        rgb_image = Image.open(rgb_path)
-        target_size = (224, 224)
-        rgb_image.thumbnail(target_size)
-        # 将图片数据转换为numpy数组，这里使用np.asanyarray
-        rgb = np.asanyarray(rgb_image)
+        rgb_path = "/home/junhaohu/dataset/test_model/depth_and_RGB/7.png"
+        rgb_img = get_rgb(448,rgb_path)
 
-        # 通过切片操作删除第三个通道（索引为2）的最后一部分内容，保留前三个通道
-        rgb = rgb[:, :, :3]
-
-        depth_path = "/home/junhaohu/dataset/test_model/DEPTH.png"
-        depth_image = Image.open(depth_path)
-        depth_image.thumbnail(target_size)
-        depth = np.asanyarray(depth_image)
+        # 深度图需要从tiff文件中获取
+        depth_path = "/home/junhaohu/dataset/test_model/depth_and_RGB/7.tiff"
+        depth_img = get_depth(448,depth_path)
 
         # 在类中对输入的图像做处理得到x
-        x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
+        x = numpy_to_torch(
+            np.expand_dims(np.concatenate(
+                (np.expand_dims(depth_img, 0),
+                 rgb_img),
+                0
+            ),0)
+        )
+
+
+        # rgb_img = rgb_img.transpose((1, 2, 0))
+        # depth_img = depth_img.transpose((1, 2, 0))
+        #
+        # cv2.imshow('depth', depth_img)
+        # cv2.imshow('rgb', rgb_img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
 
         # Predict the grasp pose using the saved model
         with torch.no_grad():
@@ -99,47 +113,17 @@ class GraspGenerator:
             pred = self.model.predict(xc)
         # 预测结果输出q是质量图片，ang是角度，wid是宽度
         q_img, ang_img, width_img = post_process_output(pred['pos'], pred['cos'], pred['sin'], pred['width'])
+        # cv2.imshow('q', q_img)
+        # cv2.imshow('a', ang_img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
         # 送到检测抓取函数获得抓取姿态
         grasps = detect_grasps(q_img, ang_img, width_img)
         print(grasps)
 
-        # Get grasp position from model output
-        # 可以加一个判断：如果检测抓取姿态为0，则放弃抓取
-        # 将图像的点与实际进行对应，具体转换关系得再细看————转换关系->图像位姿和实际位姿映射
-        # pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0], grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale - 0.04
-        # pos_x = np.multiply(grasps[0].center[1] + self.cam_data.top_left[1] - self.camera.intrinsics.ppx,
-        #                     pos_z / self.camera.intrinsics.fx)
-        # pos_y = np.multiply(grasps[0].center[0] + self.cam_data.top_left[0] - self.camera.intrinsics.ppy,
-        #                     pos_z / self.camera.intrinsics.fy)
-        #
-        # if pos_z == 0:
-        #     return
-        #
-        # target = np.asarray([pos_x, pos_y, pos_z])
-        # target.shape = (3, 1)
-        # print('target: ', target)
-        #
-        # # Convert camera to robot coordinates机械臂坐标下的位置
-        # camera2robot = self.cam_pose
-        # target_position = np.dot(camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
-        # target_position = target_position[0:3, 0]
-        #
-        # # Convert camera to robot angle机械臂坐标下的抓取姿态，可能有问题，需要看一下
-        # angle = np.asarray([0, 0, grasps[0].angle])
-        # angle.shape = (3, 1)
-        # target_angle = np.dot(camera2robot[0:3, 0:3], angle)
-        #
-        # # 加上抓取的宽度
-        #
-        # # Concatenate grasp pose with grasp angle
-        # grasp_pose = np.append(target_position, target_angle[2])
-        #
-        # print('grasp_pose: ', grasp_pose)
-        #
-        # np.save(self.grasp_pose, grasp_pose)
-
         if self.fig:
-            plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, save=True)
+            plot_grasp(fig=self.fig, rgb_img=get_rgb(448,rgb_path,False), grasps=grasps, save=True)
 
     def run(self):
         print("test begining")

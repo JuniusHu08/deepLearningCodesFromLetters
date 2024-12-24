@@ -41,7 +41,7 @@ class RealSenseCamera:
         self.scale = cfg.get_device().first_depth_sensor().get_depth_scale()
 
     def get_image_bundle(self):
-        for i in range(10):
+        for i in range(50):
             frames = self.pipeline.wait_for_frames()
 
             align = rs.align(rs.stream.color)
@@ -65,6 +65,10 @@ class RealSenseCamera:
 
         rgb = images['rgb']
         depth = images['aligned_depth']
+        #
+        # plt.imsave('rgb.png', rgb)
+        # plt.imsave('depth_image.png', depth.squeeze(), cmap='gray')
+
 
         fig, ax = plt.subplots(1, 2, squeeze=False)
         ax[0, 0].imshow(rgb)
