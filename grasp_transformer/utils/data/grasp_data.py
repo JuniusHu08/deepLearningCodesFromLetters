@@ -60,6 +60,11 @@ class GraspDatasetBase(torch.utils.data.Dataset):
         else:
             zoom_factor = 1.0
 
+        if isinstance(rot, torch.Tensor):
+            rot = rot.item()  # 使用item()方法将Tensor转换为Python的标量值（这里会转换为float类型）
+        if isinstance(zoom_factor, torch.Tensor):
+            zoom_factor = zoom_factor.item()
+
         # Load the depth image
         if self.include_depth:
             depth_img = self.get_depth(idx, rot, zoom_factor)

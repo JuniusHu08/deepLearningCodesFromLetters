@@ -145,3 +145,39 @@ INFO:root:Epoch: 22, Batch: 10, Loss: 0.0358
 INFO:root:Validating...
 INFO:root:0/31 = 0.000000
 INFO:root:Beginning Epoch 23
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.3039
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 01
+INFO:root:Epoch: 1, Batch: 10, Loss: 0.0786
+INFO:root:Validating...
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.4150
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 01
+INFO:root:Epoch: 1, Batch: 10, Loss: 0.0965
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 02
+INFO:root:Epoch: 2, Batch: 10, Loss: 0.0460
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 03
+INFO:root:Epoch: 3, Batch: 10, Loss: 0.0447
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 04
+INFO:root:Epoch: 4, Batch: 10, Loss: 0.0288
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 05
