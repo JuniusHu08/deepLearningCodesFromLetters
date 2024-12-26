@@ -1,6 +1,8 @@
 import os
 import glob
 
+import torch
+
 from .grasp_data import GraspDatasetBase
 from utils.dataset_processing import grasp, image
 
@@ -19,7 +21,7 @@ class CornellDataset(GraspDatasetBase):
         """
         super(CornellDataset, self).__init__(**kwargs)
 
-        graspf = glob.glob(os.path.join(file_path, '*', 'pcd*cpos.txt'))
+        graspf = glob.glob(os.path.join(file_path, 'pcd*cpos.txt'))
         graspf.sort()
         l = len(graspf)
         if l == 0:
@@ -43,10 +45,15 @@ class CornellDataset(GraspDatasetBase):
         return center, left, top
 
     def get_gtbb(self, idx, rot=0, zoom=1.0):
+        # 对于生成的抓取而言，应该是需要修改抓取姿态
         gtbbs = grasp.GraspRectangles.load_from_cornell_file(self.grasp_files[idx])
         center, left, top = self._get_crop_attrs(idx)
+        if isinstance(rot, torch.Tensor):
+            rot = rot.item()  # 使用item()方法将Tensor转换为Python的标量值（这里会转换为float类型）
         gtbbs.rotate(rot, center)
         gtbbs.offset((-top, -left))
+        if isinstance(zoom, torch.Tensor):
+            zoom = zoom.item()
         gtbbs.zoom(zoom, (self.output_size//2, self.output_size//2))
         return gtbbs
 

@@ -3,40 +3,145 @@ INFO:root:Done
 INFO:root:Loading Network...
 INFO:root:Done
 INFO:root:Beginning Epoch 00
-INFO:root:Epoch: 0, Batch: 10, Loss: 0.3556
-INFO:root:Epoch: 0, Batch: 20, Loss: 0.0838
-INFO:root:Epoch: 0, Batch: 30, Loss: 0.0622
-INFO:root:Epoch: 0, Batch: 40, Loss: 0.0329
-INFO:root:Epoch: 0, Batch: 50, Loss: 0.0313
-INFO:root:Epoch: 0, Batch: 60, Loss: 0.0304
-INFO:root:Epoch: 0, Batch: 70, Loss: 0.0290
-INFO:root:Epoch: 0, Batch: 80, Loss: 0.0288
-INFO:root:Epoch: 0, Batch: 90, Loss: 0.0379
-INFO:root:Epoch: 0, Batch: 100, Loss: 0.0262
-INFO:root:Epoch: 0, Batch: 110, Loss: 0.0364
-INFO:root:Epoch: 0, Batch: 120, Loss: 0.0257
-INFO:root:Epoch: 0, Batch: 130, Loss: 0.0382
-INFO:root:Epoch: 0, Batch: 140, Loss: 0.0241
-INFO:root:Epoch: 0, Batch: 150, Loss: 0.0196
-INFO:root:Epoch: 0, Batch: 160, Loss: 0.0323
-INFO:root:Epoch: 0, Batch: 170, Loss: 0.0205
-INFO:root:Epoch: 0, Batch: 180, Loss: 0.0354
-INFO:root:Epoch: 0, Batch: 190, Loss: 0.0326
-INFO:root:Epoch: 0, Batch: 200, Loss: 0.0274
-INFO:root:Epoch: 0, Batch: 210, Loss: 0.0184
-INFO:root:Epoch: 0, Batch: 220, Loss: 0.0312
-INFO:root:Epoch: 0, Batch: 230, Loss: 0.0248
-INFO:root:Epoch: 0, Batch: 240, Loss: 0.0252
-INFO:root:Epoch: 0, Batch: 250, Loss: 0.0261
-INFO:root:Epoch: 0, Batch: 260, Loss: 0.0416
-INFO:root:Epoch: 0, Batch: 270, Loss: 0.0282
-INFO:root:Epoch: 0, Batch: 280, Loss: 0.0289
-INFO:root:Epoch: 0, Batch: 290, Loss: 0.0214
-INFO:root:Epoch: 0, Batch: 300, Loss: 0.0310
-INFO:root:Epoch: 0, Batch: 310, Loss: 0.0223
-INFO:root:Epoch: 0, Batch: 320, Loss: 0.0223
-INFO:root:Epoch: 0, Batch: 330, Loss: 0.0197
-INFO:root:Epoch: 0, Batch: 340, Loss: 0.0326
-INFO:root:Epoch: 0, Batch: 350, Loss: 0.0275
-INFO:root:Epoch: 0, Batch: 360, Loss: 0.0332
-INFO:root:Epoch: 0, Batch: 370, Loss: 0.0312
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.4309
+INFO:root:Validating...
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.3576
+INFO:root:Validating...
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.3657
+INFO:root:Validating...
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.3354
+INFO:root:Validating...
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.3404
+INFO:root:Validating...
+INFO:root:Loading Cornell Dataset...
+INFO:root:Done
+INFO:root:Loading Network...
+INFO:root:Done
+INFO:root:Beginning Epoch 00
+INFO:root:Epoch: 0, Batch: 10, Loss: 0.2973
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 01
+INFO:root:Epoch: 1, Batch: 10, Loss: 0.0851
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 02
+INFO:root:Epoch: 2, Batch: 10, Loss: 0.0654
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 03
+INFO:root:Epoch: 3, Batch: 10, Loss: 0.0300
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 04
+INFO:root:Epoch: 4, Batch: 10, Loss: 0.0282
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 05
+INFO:root:Epoch: 5, Batch: 10, Loss: 0.0318
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 06
+INFO:root:Epoch: 6, Batch: 10, Loss: 0.0364
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 07
+INFO:root:Epoch: 7, Batch: 10, Loss: 0.0222
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 08
+INFO:root:Epoch: 8, Batch: 10, Loss: 0.0367
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 09
+INFO:root:Epoch: 9, Batch: 10, Loss: 0.0284
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 10
+INFO:root:Epoch: 10, Batch: 10, Loss: 0.0215
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 11
+INFO:root:Epoch: 11, Batch: 10, Loss: 0.0318
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 12
+INFO:root:Epoch: 12, Batch: 10, Loss: 0.0229
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 13
+INFO:root:Epoch: 13, Batch: 10, Loss: 0.0227
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 14
+INFO:root:Epoch: 14, Batch: 10, Loss: 0.0291
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 15
+INFO:root:Epoch: 15, Batch: 10, Loss: 0.0349
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 16
+INFO:root:Epoch: 16, Batch: 10, Loss: 0.0248
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 17
+INFO:root:Epoch: 17, Batch: 10, Loss: 0.0340
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 18
+INFO:root:Epoch: 18, Batch: 10, Loss: 0.0356
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 19
+INFO:root:Epoch: 19, Batch: 10, Loss: 0.0334
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 20
+INFO:root:Epoch: 20, Batch: 10, Loss: 0.0413
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 21
+INFO:root:Epoch: 21, Batch: 10, Loss: 0.0294
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 22
+INFO:root:Epoch: 22, Batch: 10, Loss: 0.0358
+INFO:root:Validating...
+INFO:root:0/31 = 0.000000
+INFO:root:Beginning Epoch 23

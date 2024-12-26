@@ -307,13 +307,9 @@ class GraspRectangle:
         :param center: Point to rotate around (e.g. image center)
         """
 
-        R = np.array(
-            [
-                [np.cos(-angle), np.sin(-angle)],
-                [-1 * np.sin(-angle), np.cos(-angle)],
-            ]
-        )
         c = np.array(center).reshape((1, 2))
+        R = np.array([[np.cos(-angle), np.sin(-angle)], [-1 * np.sin(-angle), np.cos(-angle)],])
+
         self.points = ((np.dot(R, (self.points - c).T)).T + c).astype(np.int32)
 
     def scale(self, factor):

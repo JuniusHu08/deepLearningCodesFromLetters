@@ -19,7 +19,7 @@ def parse_args():
     # Network
     # Dataset & Data & Training
     parser.add_argument('--dataset', type=str,default="cornell", help='Dataset Name ("cornell" or "jacquard")')
-    parser.add_argument('--dataset-path', type=str,default="/home/junhaohu/dataset/cornell" ,help='Path to dataset')
+    parser.add_argument('--dataset-path', type=str,default="/home/junhaohu/dataset/cornell_new" ,help='Path to dataset')
     # parser.add_argument('--dataset-path', type=str, default="/home/junhaohu/dataset/jacquard_debug", help='Path to dataset')
     parser.add_argument('--use-depth', type=int, default=1, help='Use Depth image for training (1/0)')
     parser.add_argument('--use-rgb', type=int, default=1, help='Use RGB image for training (0/1)')
@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument('--batch-size', type=int, default=16, help='Batch size')
     parser.add_argument('--vis', type=bool, default=False, help='vis')
     parser.add_argument('--epochs', type=int, default=1000, help='Training epochs')
-    parser.add_argument('--batches-per-epoch', type=int, default=500, help='Batches per Epoch')
+    parser.add_argument('--batches-per-epoch', type=int, default=11, help='Batches per Epoch')
     parser.add_argument('--val-batches', type=int, default=32, help='Validation Batches')
     # Logging etc.
     parser.add_argument('--description', type=str, default='', help='Training description')

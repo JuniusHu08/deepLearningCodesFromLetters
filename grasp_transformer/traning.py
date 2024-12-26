@@ -32,6 +32,7 @@ def validate(net, device, val_data, batches_per_epoch):
     with torch.no_grad():
         batch_idx = 0
         while batch_idx < batches_per_epoch:
+            print('-----------------validate------------------------')
             for x, y, didx, rot, zoom_factor in val_data:
                 batch_idx += 1
                 if batches_per_epoch is not None and batch_idx >= batches_per_epoch:
@@ -93,11 +94,9 @@ def train(epoch, net, device, train_data, optimizer, batches_per_epoch, vis=Fals
     # Use batches per epoch to make training on different sized datasets (cornell/jacquard) more equivalent.
     while batch_idx < batches_per_epoch:
         for x, y, _, _, _ in train_data:
-            print("shape:",x.shape)
             batch_idx += 1
             if batch_idx >= batches_per_epoch:
                 break
-            print("x_0:",x[0].shape,y[0][0].shape)
             # a = x[0].permute(1,2,0).numpy()
             # a = a[:,:,:3]
             # cv2.imshow('Image', a)
